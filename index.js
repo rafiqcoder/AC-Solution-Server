@@ -30,7 +30,12 @@ async function run() {
             });
         })
         app.get('/services',async (req,res) => {
-            const cursor = Services.find({});
+            const cursor = Services.find({}).sort({ _id: -1 });
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+        app.get('/home',async (req,res) => {
+            const cursor = Services.find({}).sort({ _id: -1 }).limit(3);
             const result = await cursor.toArray();
             res.send(result);
         });
