@@ -29,8 +29,11 @@ async function run() {
                 data: result,
             });
         })
-
-
+        app.get('/services',async (req,res) => {
+            const cursor = Services.find({});
+            const result = await cursor.toArray();
+            res.send(result);
+        });
 
     } finally {
         // await client.close();
