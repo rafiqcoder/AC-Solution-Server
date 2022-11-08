@@ -18,6 +18,7 @@ const client = new MongoClient(uri,{ useNewUrlParser: true,useUnifiedTopology: t
 
 async function run() {
     const Services = client.db('AcSolutions').collection('Services');
+    const Reviews = client.db('AcSolutions').collection('Reviews');
 
     try {
         app.post('/add-service',async (req,res) => {
@@ -46,8 +47,23 @@ async function run() {
             const query = { _id: ObjectId(id) };
             const cursor = Services.find(query);
             const result = await cursor.toArray();
-            res.send(result)
+            const cursor2 = Reviews.find({ serviceId: id }).sort({ reviewTime: -1 });
+            const result2 = await cursor2.toArray();
+            res.send({
+                message: 'success',
+                services: result,
+                reviews: result2,
+            })
 
+        });
+        app.post('/add-review',async (req,res) => {
+            const review = req.body;
+            const result = await Reviews.insertOne(review);
+            console.log(result);
+            res.send({
+                message: 'success',
+                data: result,
+            });
         });
 
 
