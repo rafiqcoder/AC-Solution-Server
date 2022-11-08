@@ -74,7 +74,43 @@ async function run() {
             res.send(result);
         });
 
+        app.delete('/reviews/:id',async (req,res) => {
+            const { id } = req.params;
+            const query = { _id: ObjectId(id) };
+            const result = await Reviews.deleteOne(query);
+            if (result.deletedCount > 0) {
+                res.send({
+                    message: 'deleted',
+                    data: result,
+                });
+            } else {
+                res.send({
+                    message: 'error',
+                });
+            }
 
+        });
+        app.patch('/review-update/:id',async (req,res) => {
+            const { id } = req.params;
+            const updatedMsg = req.body;
+
+
+            const query = { _id: ObjectId(id) };
+            const result = await Reviews.updateOne(query,{ $set: updatedMsg });
+            console.log(result);
+            if (result.modifiedCount > 0) {
+                res.send({
+                    message: 'updated',
+                    data: result,
+                });
+            } else {
+                res.send({
+                    message: 'error',
+                });
+            }
+
+
+        });
 
 
     } finally {
