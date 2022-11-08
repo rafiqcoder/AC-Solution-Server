@@ -65,6 +65,16 @@ async function run() {
                 data: result,
             });
         });
+        // get reviews by email
+        app.get('/reviews',async (req,res) => {
+            const email = req.query.email;
+            const query = { email: email };
+            const cursor = Reviews.find(query).sort({ reviewTime: -1 });
+            const result = await cursor.toArray();
+            res.send(result);
+        });
+
+
 
 
     } finally {
