@@ -12,14 +12,14 @@ app.use(express.json());
 
 
 
-const uri = `mongodb+srv://AcSolutions:x7qezkoFdQPHxa7y@cluster0.1rvc7ql.mongodb.net/?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.1rvc7ql.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri,{ useNewUrlParser: true,useUnifiedTopology: true,serverApi: ServerApiVersion.v1 });
 
 async function run() {
     const Services = client.db('AcSolutions').collection('Services');
     const Reviews = client.db('AcSolutions').collection('Reviews');
-
+    
     try {
         app.post('/add-service',async (req,res) => {
             const service = req.body;
