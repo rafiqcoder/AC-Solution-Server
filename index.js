@@ -15,11 +15,27 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.1rvc7ql.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri,{ useNewUrlParser: true,useUnifiedTopology: true,serverApi: ServerApiVersion.v1 });
+function verifyJWT(req,res,next) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).send('No token provided');
+        return;
+    }
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token,process.env.ACCESS_SECRET_TOKEN,function (err,decoded) {
+        if (err) {
+            res.status(403).send('Invalid token');
+            return;
+        }
+        req.decoded = decoded;
+        next();
 
+    })
+}
 async function run() {
     const Services = client.db('AcSolutions').collection('Services');
     const Reviews = client.db('AcSolutions').collection('Reviews');
-    
+
     try {
         app.post('/add-service',async (req,res) => {
             const service = req.body;
@@ -66,9 +82,21 @@ async function run() {
             });
         });
         // get reviews by email
-        app.get('/reviews',async (req,res) => {
+        app.get('/reviews',verifyJWT,async (req,res) => {
             const email = req.query.email;
-            const query = { email: email };
+            console.log(email);
+            const decoded = req.decoded;
+            // console.log(decoded.email);
+            if (decoded.email !== email) {
+                res.status(403).send('Forbidden');
+                return;
+            }
+
+            let query = {};
+            if (email) {
+                query = { email: email };
+
+            }
             const cursor = Reviews.find(query).sort({ reviewTime: -1 });
             const result = await cursor.toArray();
             res.send(result);
@@ -110,6 +138,12 @@ async function run() {
             }
 
 
+        });
+
+        app.post('/jwt',(req,res) => {
+            const user = req.body;
+            const token = jwt.sign(user,process.env.ACCESS_SECRET_TOKEN,{ expiresIn: '1d' });
+            res.send({ token });
         });
 
 
