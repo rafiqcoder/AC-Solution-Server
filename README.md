@@ -20,11 +20,11 @@
 
 ## Live Web App link
 
--
+- https://acsolutionsbd.web.app/
 
-## FrontEnd Server GitHub Ripo Link
+## FrontEnd GitHub Ripo Link
 
-- https://github.com/Porgramming-Hero-web-course/b6a11-service-review-server-side-rafiqcoder
+- https://github.com/Porgramming-Hero-web-course/b6a11-service-review-client-side-rafiqcoder
 
 ## Packages that are used
 
@@ -34,4 +34,4 @@
 - jwt
 - dotenv
 - moment.js
-* React-Photo-View
+
